@@ -10,7 +10,7 @@
 
 	<groupId>net.stickycode.plugins</groupId>
 	<artifactId>bootstrap-maven-plugin</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.2-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>${project.artifactId}-1</name>
@@ -19,9 +19,9 @@
 	<url>http://www.StickyCode.net/plugins/${project.artifactId}</url>
 
 	<scm>
-		<connection>scm:svn:http://stickycode.googlecode.com/svn/trunk/net.stickycode.plugins/${project.artifactId}</connection>
-		<developerConnection>scm:svn:https://stickycode.googlecode.com/svn/trunk/net.stickycode.plugins/${project.artifactId}</developerConnection>
-		<url>http://code.google.com/p/stickycode/source/browse/#svn/trunk/net.stickycode.plugins/${project.artifactId}</url>
+		<connection>scm:svn:http://stickycode.googlecode.com/svn/trunk/net.stickycode.plugins/bootstrap-maven-plugin</connection>
+		<developerConnection>scm:svn:https://stickycode.googlecode.com/svn/trunk/net.stickycode.plugins/bootstrap-maven-plugin</developerConnection>
+		<url>http://code.google.com/p/stickycode/source/browse/#svn/trunk/net.stickycode.plugins/bootstrap-maven-plugin</url>
 	</scm>
 
 	<prerequisites>
