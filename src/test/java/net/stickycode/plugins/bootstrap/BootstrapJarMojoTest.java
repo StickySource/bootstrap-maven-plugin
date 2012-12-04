@@ -2,6 +2,7 @@ package net.stickycode.plugins.bootstrap;
 
 import static org.fest.assertions.Assertions.assertThat;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
@@ -63,10 +64,10 @@ public class BootstrapJarMojoTest {
         "sticky-stereotype-resource",
         "jar",
         "2.2");
-    List<Artifact> collectTransitives = mojo.collectArtifacts(artifact);
+    Collection<Artifact> collectTransitives = mojo.collectArtifacts(artifact);
     assertThat(collectTransitives).hasSize(3);
   }
-  
+
   @Test
   public void justStereotype() {
     Artifact artifact = new DefaultArtifact(
@@ -74,7 +75,7 @@ public class BootstrapJarMojoTest {
         "sticky-stereotype-component",
         "jar",
         "2.2");
-    List<Artifact> collectTransitives = mojo.collectArtifacts(artifact);
+    Collection<Artifact> collectTransitives = mojo.collectArtifacts(artifact);
     assertThat(collectTransitives).hasSize(2);
   }
 }
