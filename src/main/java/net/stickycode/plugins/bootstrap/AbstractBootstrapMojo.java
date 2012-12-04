@@ -78,8 +78,15 @@ public abstract class AbstractBootstrapMojo
   /**
    * The output jar file, defaults to jar as most systems allow [double] clicking of jars to run them.
    */
-  @Parameter(defaultValue = "${project.build.directory}/${project.artifactId}-${project.version}-application.jar")
-  private File bootstrapJar;
+  @Parameter(defaultValue = "${project.build.directory}", readonly = true)
+  private File buildDirectory;
+
+  @Parameter(defaultValue = "${project.build.finalName}", readonly = true)
+  private String finalName;
+
+  /** The classifier of the bootstrap jar */
+  @Parameter(defaultValue = "bootstrap", property = "bootstrapClassifier")
+  private String bootstrapClassifier;
 
   @Parameter(defaultValue = "${project.build.directory}/embedder.classpath")
   private File embedderClasspath;
@@ -90,18 +97,6 @@ public abstract class AbstractBootstrapMojo
    */
   @Parameter
   private MavenArchiveConfiguration config = new MavenArchiveConfiguration();
-
-  @Parameter(defaultValue = "${project.groupId}")
-  protected String groupId;
-
-  @Parameter(defaultValue = "${project.artifactId}")
-  protected String artifactId;
-
-  @Parameter(defaultValue = "${project.version}")
-  protected String version;
-
-  @Parameter(defaultValue = "${project.extension}")
-  protected String extension;
 
   /**
    * The version of the embedder to use.
@@ -145,7 +140,9 @@ public abstract class AbstractBootstrapMojo
       throws ArchiverException, IOException, ManifestException, DependencyResolutionRequiredException {
     MavenArchiver generator = new MavenArchiver();
     generator.setArchiver(archiver);
-    generator.setOutputFile(bootstrapJar);
+    File outputFile = new File(buildDirectory, finalName + "-" + bootstrapClassifier + ".jar");
+    getLog().debug("using classifier " + bootstrapClassifier);
+    generator.setOutputFile(outputFile);
     generator.getManifest(project, config);
     Writer writer = new BufferedWriter(new FileWriter(embedderClasspath));
     for (File file : artifacts) {

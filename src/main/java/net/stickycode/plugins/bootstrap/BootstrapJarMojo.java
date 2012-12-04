@@ -5,12 +5,25 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 
 @Mojo(name = "jar")
 public class BootstrapJarMojo
     extends AbstractBootstrapMojo {
+
+  @Parameter(defaultValue = "${project.groupId}")
+  private String groupId;
+
+  @Parameter(defaultValue = "${project.artifactId}")
+  private String artifactId;
+
+  @Parameter(defaultValue = "${project.version}")
+  private String version;
+
+  @Parameter(defaultValue = "${project.extension}")
+  private String extension;
 
   @Override
   protected Collection<File> collectArtifacts() {
