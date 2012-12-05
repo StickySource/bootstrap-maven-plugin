@@ -101,7 +101,7 @@ public abstract class AbstractBootstrapMojo
   /**
    * The version of the embedder to use.
    */
-  @Parameter(defaultValue = "0.4")
+  @Parameter(defaultValue = "0.5")
   private String embedderVersion;
 
   @Component
