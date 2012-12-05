@@ -103,8 +103,9 @@
 					<configuration>
 						<groupId>net.stickycode.deploy.sample</groupId>
 						<artifactId>sticky-deployer-sample-main</artifactId>
-						<version>1.1</version>
+						<version>1.2-SNAPSHOT</version>
 						<extension>jar</extension>
+						<embedderVersion>0.5-SNAPSHOT</embedderVersion>
 					</configuration>
 				</plugin>
 			</plugins>

@@ -37,7 +37,7 @@ public class BootstrapJarMojoTest {
   private RepositorySystemSession session;
 
   @InjectMocks
-  private BootstrapJarMojo mojo = new BootstrapJarMojo();
+  private BootstrapArtifactMojo mojo = new BootstrapArtifactMojo();
 
   {
     DefaultServiceLocator locator = new DefaultServiceLocator();
