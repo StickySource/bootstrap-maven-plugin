@@ -23,6 +23,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
@@ -53,6 +54,9 @@ public abstract class AbstractBootstrapMojo
 
   @Component
   protected RepositorySystem repository;
+  
+  @Component
+  private MavenProjectHelper projectHelper;
 
   /**
    * The session used for resolving dependencies.
@@ -86,7 +90,11 @@ public abstract class AbstractBootstrapMojo
 
   /** The classifier of the bootstrap jar */
   @Parameter(defaultValue = "bootstrap", property = "bootstrapClassifier")
-  private String bootstrapClassifier;
+  private String classifier;
+  
+  /** The type of the bootstrap output */
+  @Parameter(defaultValue = "jar")
+  private String type;
 
   @Parameter(defaultValue = "${project.build.directory}/embedder.classpath")
   private File embedderClasspath;
@@ -103,7 +111,7 @@ public abstract class AbstractBootstrapMojo
    */
   @Parameter(defaultValue = "0.6")
   private String embedderVersion;
-
+  
   @Component
   protected ArchiverManager archiverManager;
 
@@ -140,8 +148,8 @@ public abstract class AbstractBootstrapMojo
       throws ArchiverException, IOException, ManifestException, DependencyResolutionRequiredException {
     MavenArchiver generator = new MavenArchiver();
     generator.setArchiver(archiver);
-    File outputFile = new File(buildDirectory, finalName + "-" + bootstrapClassifier + ".jar");
-    getLog().debug("using classifier " + bootstrapClassifier);
+    File outputFile = new File(buildDirectory, finalName + "-" + classifier + ".jar");
+    getLog().debug("using classifier " + classifier);
     generator.setOutputFile(outputFile);
     generator.getManifest(project, config);
     Writer writer = new BufferedWriter(new FileWriter(embedderClasspath));
@@ -156,6 +164,8 @@ public abstract class AbstractBootstrapMojo
     writer.close();
     addEmbedder();
     generator.createArchive(project, config);
+    
+    projectHelper.attachArtifact( getProject(), type, classifier, outputFile );
   }
 
   void indexJar(File file, Writer writer)
