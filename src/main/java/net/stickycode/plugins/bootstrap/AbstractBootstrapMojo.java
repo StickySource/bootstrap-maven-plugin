@@ -101,7 +101,7 @@ public abstract class AbstractBootstrapMojo
   /**
    * The version of the embedder to use.
    */
-  @Parameter(defaultValue = "0.5")
+  @Parameter(defaultValue = "0.6")
   private String embedderVersion;
 
   @Component
@@ -212,6 +212,9 @@ public abstract class AbstractBootstrapMojo
     List<Artifact> list = new LinkedList<Artifact>();
     try {
       DependencyResult transitives = repository.resolveDependencies(session, createRequest(artifact));
+      if (transitives == null)
+        throw new RuntimeException("Lookup failed for " + artifact);
+      
       collectArtifacts(transitives.getRoot(), list);
       return list;
     }
