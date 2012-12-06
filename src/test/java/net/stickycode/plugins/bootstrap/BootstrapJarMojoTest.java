@@ -3,7 +3,6 @@ package net.stickycode.plugins.bootstrap;
 import static org.fest.assertions.Assertions.assertThat;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
 import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
@@ -37,7 +36,7 @@ public class BootstrapJarMojoTest {
   private RepositorySystemSession session;
 
   @InjectMocks
-  private BootstrapArtifactMojo mojo = new BootstrapArtifactMojo();
+  private BootstrapArtifactsMojo mojo = new BootstrapArtifactsMojo();
 
   {
     DefaultServiceLocator locator = new DefaultServiceLocator();
