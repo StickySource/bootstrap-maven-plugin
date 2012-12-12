@@ -169,7 +169,6 @@ public abstract class AbstractBootstrapMojo
     writer.close();
     addEmbedder();
     generator.createArchive(project, config);
-
   }
 
   protected void attachBootstrapArtifact() {

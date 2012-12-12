@@ -61,7 +61,6 @@ public class BootstrapWarMojo
       throws MojoExecutionException {
 
     File outputFile = new File(buildDirectory, finalName + "-" + classifier + ".war");
-    getLog().info("creating " + outputFile);
     try {
       ZipOutputStream append = new ZipOutputStream(new FileOutputStream(outputFile));
       Set<String> seen = new HashSet<String>();
@@ -82,6 +81,7 @@ public class BootstrapWarMojo
       finally {
         IOUtil.close(append);
       }
+      getLog().info("Bootstrap war created, try java -jar " + outputFile);
     }
     catch (FileNotFoundException e) {
       throw new MojoExecutionException("Could not create file " + outputFile);
