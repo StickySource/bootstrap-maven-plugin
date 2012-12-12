@@ -10,7 +10,7 @@
 
 	<groupId>net.stickycode.plugins</groupId>
 	<artifactId>bootstrap-maven-plugin</artifactId>
-	<version>1.7-SNAPSHOT</version>
+	<version>1.8-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<name>${project.artifactId}-1</name>
