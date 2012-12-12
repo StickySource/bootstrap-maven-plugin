@@ -54,7 +54,7 @@ public abstract class AbstractBootstrapMojo
 
   @Component
   protected RepositorySystem repository;
-  
+
   @Component
   private MavenProjectHelper projectHelper;
 
@@ -91,7 +91,7 @@ public abstract class AbstractBootstrapMojo
   /** The classifier of the bootstrap jar */
   @Parameter(defaultValue = "bootstrap", property = "bootstrapClassifier")
   private String classifier;
-  
+
   /** The type of the bootstrap output */
   @Parameter(defaultValue = "jar")
   private String type;
@@ -109,9 +109,9 @@ public abstract class AbstractBootstrapMojo
   /**
    * The version of the embedder to use.
    */
-  @Parameter(defaultValue = "0.6")
+  @Parameter(defaultValue = "0.6", required = true)
   private String embedderVersion;
-  
+
   @Component
   protected ArchiverManager archiverManager;
 
@@ -124,9 +124,10 @@ public abstract class AbstractBootstrapMojo
       throws MojoExecutionException, MojoFailureException {
     getLog().info("Using embedder net.stickycode.deploy:sticky-deployer-embedded-" + embedderVersion);
 
-    Collection<File> artifacts = collectArtifacts();
     try {
-      generateArchive(artifacts);
+      generateArchive();
+      embellishArchive();
+      attachBootstrapArtifact();
     }
     catch (ArchiverException e) {
       throw new RuntimeException(e);
@@ -142,30 +143,53 @@ public abstract class AbstractBootstrapMojo
     }
   }
 
+  protected File getBootstrapFile() {
+    return new File(buildDirectory, finalName + "-" + classifier + "." + getType());
+  }
+
   protected abstract Collection<File> collectArtifacts();
 
-  void generateArchive(Collection<File> artifacts)
-      throws ArchiverException, IOException, ManifestException, DependencyResolutionRequiredException {
+  void generateArchive()
+      throws ArchiverException, IOException, ManifestException, DependencyResolutionRequiredException, MojoExecutionException {
+
     MavenArchiver generator = new MavenArchiver();
     generator.setArchiver(archiver);
-    File outputFile = new File(buildDirectory, finalName + "-" + classifier + ".jar");
-    getLog().debug("using classifier " + classifier);
+
+    File outputFile = getBootstrapFile();
+    if (outputFile.exists())
+      getLog().warn("Overwriting " + outputFile + " is that what you expected?");
+
     generator.setOutputFile(outputFile);
     generator.getManifest(project, config);
+
     Writer writer = new BufferedWriter(new FileWriter(embedderClasspath));
-    for (File file : artifacts) {
+
+    addArtifacts(archiver, writer);
+
+    writer.close();
+    addEmbedder();
+    generator.createArchive(project, config);
+
+  }
+
+  protected void attachBootstrapArtifact() {
+    projectHelper.attachArtifact(getProject(), getType(), classifier, getBootstrapFile());
+  }
+
+  protected void addArtifacts(JarArchiver archive, Writer writer)
+      throws ArchiverException, IOException {
+    for (File file : collectArtifacts()) {
       String classpathEntry = "BOOT-INF/lib/" + file.getName();
-      archiver.addFile(file, classpathEntry);
+      archive.addFile(file, classpathEntry);
       writer.write('!');
       writer.write(classpathEntry);
       writer.write('\n');
       indexJar(file, writer);
     }
-    writer.close();
-    addEmbedder();
-    generator.createArchive(project, config);
-    
-    projectHelper.attachArtifact( getProject(), type, classifier, outputFile );
+  }
+
+  protected String getType() {
+    return type;
   }
 
   void indexJar(File file, Writer writer)
@@ -214,8 +238,15 @@ public abstract class AbstractBootstrapMojo
         throw new RuntimeException(e);
       }
     }
-    archiver.addFile(embedderClasspath, "META-INF/sticky/application.classpath");
+    
+    if (addClasspathIndex())
+      archiver.addFile(embedderClasspath, "META-INF/sticky/application.classpath");
+    
     config.addManifestEntry("Main-Class", "net.stickycode.deploy.bootstrap.StickyLauncher");
+  }
+
+  protected boolean addClasspathIndex() {
+    return true;
   }
 
   Collection<Artifact> collectArtifacts(Artifact artifact) {
@@ -224,7 +255,7 @@ public abstract class AbstractBootstrapMojo
       DependencyResult transitives = repository.resolveDependencies(session, createRequest(artifact));
       if (transitives == null)
         throw new RuntimeException("Lookup failed for " + artifact);
-      
+
       collectArtifacts(transitives.getRoot(), list);
       return list;
     }
@@ -243,6 +274,10 @@ public abstract class AbstractBootstrapMojo
 
   DependencyRequest createRequest(Artifact artifact) {
     return new DependencyRequest(new CollectRequest(new Dependency(artifact, scope), repositories), null);
+  }
+
+  void embellishArchive()
+      throws MojoExecutionException {
   }
 
 }
