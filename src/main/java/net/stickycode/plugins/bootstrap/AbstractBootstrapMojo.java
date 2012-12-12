@@ -217,6 +217,13 @@ public abstract class AbstractBootstrapMojo
         writer.write(mainClass);
         writer.write('\n');
       }
+      
+      String description = manifest.getMainAttributes().getValue("Package");
+      if (description != null) {
+        writer.write('"');
+        writer.write(description);
+        writer.write('\n');
+      }
     }
   }
 
